@@ -1,0 +1,7 @@
+metric,target,measured,unit,device,runtime,pass
+top1_accuracy,>=70,71.43,%,"Mac mini (Apple M1), CPU only",ONNX Runtime 1.31.1 INT8 CPU 1-thread + MediaPipe Tasks (CPU),true
+latency_p95,<=50,39.69,ms,"Mac mini (Apple M1), CPU only",ONNX Runtime 1.31.1 INT8 CPU 1-thread + MediaPipe Tasks (CPU),true
+model_size,<=25,19.4,MB,"Mac mini (Apple M1), CPU only",ONNX Runtime 1.31.1 INT8 CPU 1-thread + MediaPipe Tasks (CPU),true
+accuracy_drop_robustness,<=5,3.0,pt,"Mac mini (Apple M1), CPU only",ONNX Runtime 1.31.1 INT8 CPU 1-thread + MediaPipe Tasks (CPU),true
+avg_power,<=500,,mW,"Mac mini (Apple M1), CPU only",ONNX Runtime 1.31.1 INT8 CPU 1-thread + MediaPipe Tasks (CPU),
+thermal_drift_10min,<=20,2.1,%,"Mac mini (Apple M1), CPU only",ONNX Runtime 1.31.1 INT8 CPU 1-thread + MediaPipe Tasks (CPU),true

@@ -1,0 +1,32 @@
+{
+ "top1": {
+  "n": 161,
+  "top1": 71.42857142857143
+ },
+ "size_mb": {
+  "signnet_int8.onnx": 5.808,
+  "hand_landmarker.task": 7.819,
+  "pose_landmarker_lite.task": 5.778
+ },
+ "latency_ms": {
+  "frames": 300,
+  "keypoints_p50": 25.470187480095774,
+  "keypoints_p95": 38.20599759928882,
+  "classifier_p50": 1.4887499855831265,
+  "classifier_p95": 1.593095826683566,
+  "total_p50": 27.005375421140343,
+  "total_p95": 39.693125744815916
+ },
+ "robustness": {
+  "mode": "video-degradation",
+  "n": 100,
+  "clean": 76.0,
+  "degraded": 73.0
+ },
+ "thermal": {
+  "seconds": 600,
+  "frames": 22106,
+  "first_p50": 25.26689547812566,
+  "last_p50": 25.798311980906874
+ }
+}

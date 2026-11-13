@@ -1,0 +1,8 @@
+numpy>=1.26
+opencv-python>=4.9
+mediapipe>=0.10.14
+onnxruntime>=1.18
+onnx>=1.16
+torch>=2.3          # training / export only; not needed for inference
+tqdm
+yt-dlp              # optional: only for downloading YouTube-hosted WLASL clips

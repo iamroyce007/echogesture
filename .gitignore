@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+data/
+data_synth/
+checkpoints*/
+models_synth/
+*.mp4
+!demo/*.mp4
+.DS_Store
+models/*_fp32.onnx
+models/*_pre.onnx
