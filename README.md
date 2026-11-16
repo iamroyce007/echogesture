@@ -140,7 +140,7 @@ occluding block, and an 8° camera tilt, then reports the accuracy drop.
 
 ## Submission deck
 
-`docs/CollegeName_TeamName_Submission.pptx` (and a PDF copy). Fill in the team, college, member and demo-link fields marked `[...]`.
+`docs/SRMIST_Hypervisor.pptx` (and a PDF copy). Team Hypervisor, SRMIST: Anirudh Ramakrishnan, Bodireddy Kiran, Koushigan Srinivasan (3rd Year, B.Tech CSE).
 
 ## Layout
 
