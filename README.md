@@ -109,11 +109,11 @@ Words are segmented from the continuous stream using hand presence and motion en
 ### Demo video
 
 ```bash
-python scripts/make_demo_video.py --voice     # -> demo/echogesture_demo.mp4 (≈55 s, 1280x720, H.264 + AAC)
+python scripts/make_demo_video.py --voice --narrate   # -> demo/echogesture_demo.mp4 (≈83 s, 1280x720, H.264 + AAC)
 ```
 The video has intro and "how it works" cards, followed by three POV scenes: two different signers, then a
 harsh-conditions scene with low light, motion blur and an occluder. A results card at the end is read from
-`results.csv`. Every caption in the video is produced live by the model on WLASL **test** clips, from signers
+`results.csv`. `--narrate` adds a text-to-speech voice-over to the cards, and `--voice` speaks each recognised word. Every caption in the video is produced live by the model on WLASL **test** clips, from signers
 not seen in training. For the final submission, record your own team member signing with
 `demo/live_hud.py --record`.
 
@@ -137,6 +137,10 @@ occluding block, and an 8° camera tilt, then reports the accuracy drop.
   `.task` files.
 * Ops used: Conv1d, BatchNorm (folded), SiLU, Softmax, MatMul. These convert directly to TFLite / LiteRT
   if required.
+
+## AI disclosure
+
+This project was built with an AI coding assistant. See [AI_DISCLOSURE.md](AI_DISCLOSURE.md).
 
 ## Submission deck
 

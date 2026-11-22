@@ -3,7 +3,7 @@
 Every caption in the video is produced by the real system (MediaPipe keypoints + INT8 ONNX model) running
 frame by frame on held-out WLASL test clips, i.e. signers never seen during training.
 
-  python scripts/make_demo_video.py --out demo/echogesture_demo.mp4 --voice
+  python scripts/make_demo_video.py --voice --narrate
 """
 from __future__ import annotations
 
@@ -30,6 +30,31 @@ from echogesture.landmarks import LH, N_HAND, RH, LandmarkExtractor, read_frames
 from echogesture.runtime import Predictor  # noqa: E402
 
 W, H, FPS = 1280, 720, 30
+
+# narration (voice-over) for the title/info cards; each card stretches to fit its line
+NARRATOR = "Samantha"
+NARRATION = {
+    "intro": "This is EchoGesture, from Team Hypervisor at S R M I S T. It turns sign language into live captions "
+             "on smart glasses, and everything runs on the device.",
+    "pipeline": "The camera tracks fifty-five points on the signer's hands and upper body. A tiny eight-bit model, "
+                "under six megabytes, reads the motion and predicts the word in under two milliseconds. "
+                "The caption then appears right beside the signer.",
+    "scene0": "Scene one. A signer the model never saw during training.",
+    "scene1": "Scene two. A different signer, in a different setting.",
+    "scene2": "Scene three. The same model, in low light, with motion blur and an object in the way.",
+    "results": "On held-out signers, EchoGesture reaches seventy-one percent top-one accuracy across a hundred words, "
+               "at under forty milliseconds per frame, with every model under twenty megabytes, and zero bytes uploaded.",
+    "outro": "EchoGesture. Conversation without the gap. Privacy without compromise.",
+}
+
+
+def tts(text: str, path: Path, voice: str | None = None, rate: int | None = None) -> float:
+    cmd = ["say", "-o", str(path)] + (["-v", voice] if voice else []) + (["-r", str(rate)] if rate else []) + [text]
+    subprocess.run(cmd, check=True)
+    out = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(path)],
+                         capture_output=True, text=True)
+    return float(out.stdout.strip() or 0)
+
 
 # (scene tag, signer_id, glosses, degrade?)  — all clips come from the WLASL *test* split
 SCENES = [
@@ -243,6 +268,7 @@ def main():
     ap.add_argument("--out", type=Path, default=ROOT / "demo" / "echogesture_demo.mp4")
     ap.add_argument("--data-dir", type=Path, default=ROOT / "data")
     ap.add_argument("--voice", action="store_true", help="speak each committed word (macOS `say`)")
+    ap.add_argument("--narrate", action="store_true", help="add a voice-over to the title/info cards (macOS `say`)")
     args = ap.parse_args()
 
     man = {json.loads(l)["video_id"]: json.loads(l) for l in (args.data_dir / "manifest.jsonl").read_text().splitlines() if l.strip()}
@@ -265,27 +291,33 @@ def main():
                             "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-", "-c:v", "libx264", "-preset", "medium",
                             "-crf", "18", "-pix_fmt", "yuv420p", str(silent)], stdin=subprocess.PIPE)
     n_frames = 0
-    speech: list[tuple[float, str]] = []
+    audio: list[tuple[float, Path]] = []  # (start time s, audio file)
+    use_say = shutil.which("say") is not None
 
     def emit(img):
         nonlocal n_frames
         enc.stdin.write(np.ascontiguousarray(img).tobytes())
         n_frames += 1
 
-    def section(fn, dur, fade_in=0.4, fade_out=0.4):
+    def section(fn, dur, fade_in=0.4, fade_out=0.4, line=None):
+        if line and args.narrate and use_say:
+            clip = tmp / f"n{len(audio)}.aiff"
+            d = tts(NARRATION[line], clip, NARRATOR, 185)
+            audio.append((n_frames / FPS + 0.5, clip))
+            dur = max(dur, d + 1.2)
         n = int(dur * FPS)
         for i in range(n):
             t = i / FPS
             a = min(1.0, ease(t / fade_in) if fade_in else 1.0, ease((dur - t) / fade_out) if fade_out else 1.0)
             emit(fade(fn(t), a))
 
-    section(lambda t: card_intro(t, 4.5), 4.5)
-    section(lambda t: card_pipeline(t, 6.0), 6.0)
+    section(lambda t: card_intro(t, 4.5), 4.5, line="intro")
+    section(lambda t: card_pipeline(t, 6.0), 6.0, line="pipeline")
 
     rng = np.random.default_rng(0)
     for si, (tag, signer, glosses, bad) in enumerate(SCENES):
         sub = "Same model, harsh capture conditions" if bad else f"Signer unseen during training  ·  {' · '.join(g.title() for g in glosses)}"
-        section(lambda t: card_scene(f"Scene {si + 1}  ·  {tag}", sub, t), 2.2)
+        section(lambda t: card_scene(f"Scene {si + 1}  ·  {tag}", sub, t), 2.2, line=f"scene{si}")
         state = HudState(clock="17:42", tag=tag if bad else None)
         k_scene = 0
         with LandmarkExtractor() as ex:
@@ -320,7 +352,10 @@ def main():
                 words, probs, _, _ = pred.classify_landmarks(np.stack(buf), 3)
                 state.hypotheses = list(zip(words, probs))
                 state.captions.append((words[0], probs[0], n_frames / FPS))
-                speech.append((n_frames / FPS, words[0].lower()))
+                if args.voice and use_say:
+                    clip = tmp / f"w{len(audio)}.aiff"
+                    tts(words[0].lower(), clip)
+                    audio.append((n_frames / FPS, clip))
                 print(f"scene {si + 1}: {g:8s} -> {words[0]:8s} ({probs[0]:.2f})")
                 state.signing = False
                 for _ in range(int(1.1 * FPS)):  # hold so the caption animation is readable
@@ -331,24 +366,22 @@ def main():
         for i in range(int(0.4 * FPS)):
             emit(fade(last, 1 - (i + 1) / (0.4 * FPS)))
 
-    section(lambda t: card_results(t, results), 6.0)
-    section(card_outro, 4.0, fade_out=0.8)
+    section(lambda t: card_results(t, results), 6.0, line="results")
+    section(card_outro, 4.0, fade_out=0.8, line="outro")
     enc.stdin.close()
     enc.wait()
 
-    if args.voice and shutil.which("say") and speech:
+    if audio:
         inputs, filters = [], []
-        for i, (ts, word) in enumerate(speech):
-            wav = tmp / f"w{i}.aiff"
-            subprocess.run(["say", "-o", str(wav), word], check=True)
-            inputs += ["-i", str(wav)]
+        for i, (ts, clip) in enumerate(audio):
+            inputs += ["-i", str(clip)]
             ms = int(ts * 1000)
-            filters.append(f"[{i + 1}:a]adelay={ms}|{ms}[a{i}]")
-        mix = "".join(f"[a{i}]" for i in range(len(speech)))
-        filters.append(f"{mix}amix=inputs={len(speech)}:normalize=0[aout]")
+            filters.append(f"[{i + 1}:a]aresample=44100,adelay={ms}|{ms}[a{i}]")
+        mix = "".join(f"[a{i}]" for i in range(len(audio)))
+        filters.append(f"{mix}amix=inputs={len(audio)}:normalize=0,apad[aout]")
         subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(silent), *inputs, "-filter_complex",
                         ";".join(filters), "-map", "0:v", "-map", "[aout]", "-c:v", "copy", "-c:a", "aac",
-                        "-b:a", "128k", str(args.out)], check=True)
+                        "-b:a", "160k", "-shortest", str(args.out)], check=True)
     else:
         shutil.copy(silent, args.out)
     shutil.rmtree(tmp, ignore_errors=True)
