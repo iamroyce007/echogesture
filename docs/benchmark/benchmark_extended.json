@@ -1,0 +1,966 @@
+{
+ "environment": {
+  "machine": "Mac mini (Apple M1, 8 GB RAM)",
+  "os": "Darwin 25.5.0",
+  "python": "3.11.17",
+  "onnxruntime": "1.31.1",
+  "torch": "2.15.0",
+  "mediapipe": "1.2.3",
+  "opencv": "5.0.0",
+  "execution": "CPU only, ONNX Runtime 1 intra-op thread for the classifier"
+ },
+ "data": {
+  "vocab": 100,
+  "clips": {
+   "train": 680,
+   "val": 178,
+   "test": 161
+  },
+  "clips_total": 1019,
+  "signers": {
+   "train": 48,
+   "val": 35,
+   "test": 32
+  },
+  "test_signers_overlapping_train": 31,
+  "wlasl100_instances": 2038
+ },
+ "accuracy": {
+  "n": 161,
+  "top1": 0.7142857142857143,
+  "top5": 0.8757763975155279,
+  "top10": 0.906832298136646,
+  "macro_top1": 0.7037037037037036,
+  "mean_confidence_correct": 0.6021069884300232,
+  "mean_confidence_wrong": 0.2076127678155899,
+  "calibration": [
+   {
+    "bin": "0.0-0.2",
+    "n": 37,
+    "accuracy": 0.24324324324324326,
+    "mean_confidence": 0.13193508982658386
+   },
+   {
+    "bin": "0.2-0.4",
+    "n": 37,
+    "accuracy": 0.6486486486486487,
+    "mean_confidence": 0.2930604815483093
+   },
+   {
+    "bin": "0.4-0.6",
+    "n": 24,
+    "accuracy": 0.8333333333333334,
+    "mean_confidence": 0.4964734613895416
+   },
+   {
+    "bin": "0.6-0.8",
+    "n": 28,
+    "accuracy": 0.9642857142857143,
+    "mean_confidence": 0.6937295794487
+   },
+   {
+    "bin": "0.8-1.0",
+    "n": 35,
+    "accuracy": 1.0,
+    "mean_confidence": 0.9065102338790894
+   }
+  ],
+  "ece": 0.22489139363632443,
+  "fp32_top1": 0.7142857142857143,
+  "fp32_int8_agreement": 0.9440993788819876,
+  "classes_perfect": 51,
+  "classes_zero": [
+   "APPLE",
+   "BEFORE",
+   "BUT",
+   "COOK",
+   "CORN",
+   "FINE",
+   "GIVE",
+   "GO",
+   "GRADUATE",
+   "JACKET",
+   "PAPER",
+   "PIZZA",
+   "THIN",
+   "TIME",
+   "WHAT"
+  ],
+  "top_confusions": [
+   {
+    "true": "PIZZA",
+    "predicted": "YES",
+    "count": 2
+   },
+   {
+    "true": "BEFORE",
+    "predicted": "PLAY",
+    "count": 1
+   },
+   {
+    "true": "GO",
+    "predicted": "LETTER",
+    "count": 1
+   },
+   {
+    "true": "DEAF",
+    "predicted": "CORN",
+    "count": 1
+   },
+   {
+    "true": "FINE",
+    "predicted": "ALL",
+    "count": 1
+   },
+   {
+    "true": "THIN",
+    "predicted": "WOMAN",
+    "count": 1
+   },
+   {
+    "true": "THIN",
+    "predicted": "WRONG",
+    "count": 1
+   },
+   {
+    "true": "WALK",
+    "predicted": "CHEAT",
+    "count": 1
+   }
+  ],
+  "per_class": {
+   "ACCIDENT": {
+    "correct": 1,
+    "total": 2
+   },
+   "AFRICA": {
+    "correct": 2,
+    "total": 2
+   },
+   "ALL": {
+    "correct": 2,
+    "total": 2
+   },
+   "APPLE": {
+    "correct": 0,
+    "total": 1
+   },
+   "BASKETBALL": {
+    "correct": 2,
+    "total": 2
+   },
+   "BED": {
+    "correct": 2,
+    "total": 2
+   },
+   "BEFORE": {
+    "correct": 0,
+    "total": 1
+   },
+   "BIRD": {
+    "correct": 2,
+    "total": 2
+   },
+   "BIRTHDAY": {
+    "correct": 1,
+    "total": 2
+   },
+   "BLACK": {
+    "correct": 1,
+    "total": 3
+   },
+   "BLUE": {
+    "correct": 1,
+    "total": 1
+   },
+   "BOWLING": {
+    "correct": 1,
+    "total": 1
+   },
+   "BROWN": {
+    "correct": 2,
+    "total": 2
+   },
+   "BUT": {
+    "correct": 0,
+    "total": 1
+   },
+   "CAN": {
+    "correct": 1,
+    "total": 1
+   },
+   "CANDY": {
+    "correct": 1,
+    "total": 1
+   },
+   "CHAIR": {
+    "correct": 2,
+    "total": 2
+   },
+   "CHANGE": {
+    "correct": 2,
+    "total": 2
+   },
+   "CITY": {
+    "correct": 2,
+    "total": 2
+   },
+   "CLOTHES": {
+    "correct": 2,
+    "total": 2
+   },
+   "COLOR": {
+    "correct": 1,
+    "total": 1
+   },
+   "COMPUTER": {
+    "correct": 2,
+    "total": 2
+   },
+   "COOK": {
+    "correct": 0,
+    "total": 2
+   },
+   "COOL": {
+    "correct": 1,
+    "total": 3
+   },
+   "CORN": {
+    "correct": 0,
+    "total": 1
+   },
+   "COUSIN": {
+    "correct": 1,
+    "total": 1
+   },
+   "COW": {
+    "correct": 2,
+    "total": 2
+   },
+   "DANCE": {
+    "correct": 1,
+    "total": 1
+   },
+   "DARK": {
+    "correct": 2,
+    "total": 2
+   },
+   "DEAF": {
+    "correct": 2,
+    "total": 3
+   },
+   "DECIDE": {
+    "correct": 1,
+    "total": 2
+   },
+   "DRINK": {
+    "correct": 2,
+    "total": 2
+   },
+   "EAT": {
+    "correct": 1,
+    "total": 1
+   },
+   "ENJOY": {
+    "correct": 1,
+    "total": 1
+   },
+   "FAMILY": {
+    "correct": 1,
+    "total": 1
+   },
+   "FINE": {
+    "correct": 0,
+    "total": 1
+   },
+   "FINISH": {
+    "correct": 1,
+    "total": 3
+   },
+   "FISH": {
+    "correct": 3,
+    "total": 3
+   },
+   "FORGET": {
+    "correct": 1,
+    "total": 1
+   },
+   "FULL": {
+    "correct": 1,
+    "total": 2
+   },
+   "GIVE": {
+    "correct": 0,
+    "total": 1
+   },
+   "GO": {
+    "correct": 0,
+    "total": 1
+   },
+   "GRADUATE": {
+    "correct": 0,
+    "total": 1
+   },
+   "HAT": {
+    "correct": 2,
+    "total": 2
+   },
+   "HEARING": {
+    "correct": 1,
+    "total": 1
+   },
+   "HELP": {
+    "correct": 2,
+    "total": 2
+   },
+   "HOT": {
+    "correct": 2,
+    "total": 3
+   },
+   "HOW": {
+    "correct": 3,
+    "total": 3
+   },
+   "JACKET": {
+    "correct": 0,
+    "total": 1
+   },
+   "KISS": {
+    "correct": 3,
+    "total": 3
+   },
+   "LANGUAGE": {
+    "correct": 1,
+    "total": 1
+   },
+   "LAST": {
+    "correct": 1,
+    "total": 2
+   },
+   "LETTER": {
+    "correct": 1,
+    "total": 2
+   },
+   "LIKE": {
+    "correct": 2,
+    "total": 2
+   },
+   "MAN": {
+    "correct": 2,
+    "total": 2
+   },
+   "MANY": {
+    "correct": 2,
+    "total": 3
+   },
+   "MEET": {
+    "correct": 1,
+    "total": 2
+   },
+   "MOTHER": {
+    "correct": 2,
+    "total": 2
+   },
+   "NEED": {
+    "correct": 1,
+    "total": 2
+   },
+   "NO": {
+    "correct": 2,
+    "total": 2
+   },
+   "NOW": {
+    "correct": 1,
+    "total": 2
+   },
+   "ORANGE": {
+    "correct": 2,
+    "total": 2
+   },
+   "PAINT": {
+    "correct": 1,
+    "total": 1
+   },
+   "PAPER": {
+    "correct": 0,
+    "total": 1
+   },
+   "PINK": {
+    "correct": 2,
+    "total": 2
+   },
+   "PIZZA": {
+    "correct": 0,
+    "total": 3
+   },
+   "PLAY": {
+    "correct": 2,
+    "total": 2
+   },
+   "PULL": {
+    "correct": 2,
+    "total": 2
+   },
+   "PURPLE": {
+    "correct": 1,
+    "total": 2
+   },
+   "SAME": {
+    "correct": 1,
+    "total": 1
+   },
+   "SCHOOL": {
+    "correct": 1,
+    "total": 2
+   },
+   "SECRETARY": {
+    "correct": 2,
+    "total": 2
+   },
+   "SON": {
+    "correct": 1,
+    "total": 1
+   },
+   "STUDY": {
+    "correct": 1,
+    "total": 1
+   },
+   "TABLE": {
+    "correct": 2,
+    "total": 2
+   },
+   "TALL": {
+    "correct": 2,
+    "total": 2
+   },
+   "TELL": {
+    "correct": 1,
+    "total": 2
+   },
+   "THIN": {
+    "correct": 0,
+    "total": 2
+   },
+   "THURSDAY": {
+    "correct": 1,
+    "total": 2
+   },
+   "TIME": {
+    "correct": 0,
+    "total": 1
+   },
+   "WALK": {
+    "correct": 1,
+    "total": 2
+   },
+   "WANT": {
+    "correct": 1,
+    "total": 2
+   },
+   "WHAT": {
+    "correct": 0,
+    "total": 1
+   },
+   "WHITE": {
+    "correct": 2,
+    "total": 2
+   },
+   "WHO": {
+    "correct": 1,
+    "total": 1
+   },
+   "WOMAN": {
+    "correct": 2,
+    "total": 3
+   },
+   "WORK": {
+    "correct": 2,
+    "total": 2
+   },
+   "WRONG": {
+    "correct": 1,
+    "total": 1
+   },
+   "YEAR": {
+    "correct": 2,
+    "total": 3
+   },
+   "YES": {
+    "correct": 1,
+    "total": 2
+   }
+  }
+ },
+ "ablations": [
+  {
+   "name": "Baseline: 1 model, direct-link clips only",
+   "train": "407 train",
+   "members": 1,
+   "params_m": 1.76,
+   "top1": 0.515527950310559,
+   "top5": 0.8136645962732919
+  },
+  {
+   "name": "Small model (0.5 M params)",
+   "train": "407 train",
+   "members": 1,
+   "params_m": 0.52,
+   "top1": 0.515527950310559,
+   "top5": 0.782608695652174
+  },
+  {
+   "name": "1 model, seed 0",
+   "train": "680 train",
+   "members": 1,
+   "params_m": 1.76,
+   "top1": 0.6708074534161491,
+   "top5": 0.8198757763975155
+  },
+  {
+   "name": "1 model, seed 1",
+   "train": "680 train",
+   "members": 1,
+   "params_m": 1.76,
+   "top1": 0.6211180124223602,
+   "top5": 0.8198757763975155
+  },
+  {
+   "name": "1 model, seed 2",
+   "train": "680 train",
+   "members": 1,
+   "params_m": 1.76,
+   "top1": 0.639751552795031,
+   "top5": 0.8322981366459627
+  },
+  {
+   "name": "3-seed ensemble",
+   "train": "680 train",
+   "members": 3,
+   "params_m": 5.29,
+   "top1": 0.6770186335403726,
+   "top5": 0.8571428571428571
+  },
+  {
+   "name": "1 model, train+val, seed 0",
+   "train": "858 train+val",
+   "members": 1,
+   "params_m": 1.76,
+   "top1": 0.7080745341614907,
+   "top5": 0.8633540372670807
+  },
+  {
+   "name": "1 model, train+val, seed 1",
+   "train": "858 train+val",
+   "members": 1,
+   "params_m": 1.76,
+   "top1": 0.6770186335403726,
+   "top5": 0.8757763975155279
+  },
+  {
+   "name": "1 model, train+val, seed 2",
+   "train": "858 train+val",
+   "members": 1,
+   "params_m": 1.76,
+   "top1": 0.6770186335403726,
+   "top5": 0.84472049689441
+  },
+  {
+   "name": "Final: 3-seed ensemble, train+val (FP32)",
+   "train": "858 train+val",
+   "members": 3,
+   "params_m": 5.29,
+   "top1": 0.7142857142857143,
+   "top5": 0.8881987577639752
+  },
+  {
+   "name": "Shipped: final ensemble, INT8 ONNX",
+   "train": "858 train+val",
+   "members": 3,
+   "params_m": 5.29,
+   "top1": 0.7142857142857143,
+   "top5": 0.8757763975155279
+  }
+ ],
+ "latency": {
+  "frames": 300,
+  "keypoints_ms": {
+   "p50": 24.33072949952475,
+   "p90": 36.71150480040524,
+   "p95": 37.67101010016631,
+   "p99": 38.848182499041286,
+   "mean": 25.766606946672255,
+   "max": 42.82200000125158
+  },
+  "classifier_ms": {
+   "p50": 1.333375001195236,
+   "p90": 1.3393044991971692,
+   "p95": 1.3467909994687943,
+   "p99": 1.3931109209443093,
+   "mean": 1.3347484980167792,
+   "max": 1.502125000115484
+  },
+  "per_frame_total_ms": {
+   "p50": 25.664104500719986,
+   "p90": 38.04487980160047,
+   "p95": 39.00438510136155,
+   "p99": 40.18155750023652,
+   "mean": 27.09998194786749,
+   "max": 44.15537500244682
+  },
+  "keypoints_samples": [
+   25.26,
+   25.46,
+   36.23,
+   36.0,
+   36.02,
+   36.01,
+   35.99,
+   25.16,
+   25.2,
+   25.26,
+   26.92,
+   36.55,
+   25.56,
+   25.73,
+   25.76,
+   25.59,
+   36.51,
+   23.44,
+   23.37,
+   25.78,
+   25.74,
+   25.74,
+   25.82,
+   25.82,
+   25.69,
+   25.84,
+   25.6,
+   25.62,
+   25.51,
+   25.97,
+   25.59,
+   25.58,
+   36.65,
+   36.75,
+   25.5,
+   25.25,
+   25.79,
+   25.83,
+   36.53,
+   36.38,
+   36.71,
+   36.57,
+   25.81,
+   25.84,
+   14.32,
+   14.13,
+   27.86,
+   28.53,
+   27.85,
+   28.25,
+   28.11,
+   27.8,
+   32.22,
+   28.16,
+   29.59,
+   28.04,
+   30.89,
+   27.92,
+   27.95,
+   29.78,
+   28.03,
+   28.08,
+   28.07,
+   28.25,
+   27.98,
+   29.99,
+   28.2,
+   28.23,
+   28.48,
+   27.94,
+   27.92,
+   29.94,
+   27.78,
+   27.95,
+   28.37,
+   28.06,
+   30.91,
+   28.15,
+   28.94,
+   27.96,
+   38.93,
+   38.77,
+   42.82,
+   27.74,
+   27.9,
+   27.83,
+   18.9,
+   36.13,
+   22.91,
+   22.86,
+   22.85,
+   22.9,
+   22.9,
+   22.87,
+   22.89,
+   22.96,
+   22.86,
+   22.83,
+   22.86,
+   22.86,
+   23.07,
+   23.3,
+   22.85,
+   22.87,
+   22.87,
+   22.85,
+   23.28,
+   22.88,
+   23.0,
+   22.85,
+   22.93,
+   22.85,
+   22.89,
+   22.84,
+   23.35,
+   22.96,
+   23.08,
+   22.8,
+   13.84,
+   13.86,
+   13.74,
+   13.79,
+   13.91,
+   13.84,
+   13.84,
+   13.8,
+   13.79,
+   14.17,
+   13.87,
+   14.24,
+   25.67,
+   36.15,
+   36.17,
+   23.56,
+   23.01,
+   22.95,
+   22.94,
+   22.94,
+   23.19,
+   23.17,
+   23.2,
+   23.17,
+   23.13,
+   22.99,
+   22.96,
+   23.42,
+   23.01,
+   23.21,
+   23.39,
+   22.95,
+   22.99,
+   23.38,
+   23.1,
+   23.15,
+   23.08,
+   22.94,
+   23.18,
+   36.59,
+   22.82,
+   13.92,
+   14.21,
+   14.26,
+   14.29,
+   14.26,
+   14.25,
+   14.23,
+   14.17,
+   14.24,
+   36.65,
+   36.62,
+   37.51,
+   37.74,
+   37.9,
+   37.63,
+   37.67,
+   37.23,
+   37.93,
+   24.54,
+   38.16,
+   24.71,
+   37.75,
+   24.39,
+   24.32,
+   24.35,
+   24.39,
+   24.35,
+   24.38,
+   24.35,
+   37.47,
+   24.35,
+   24.32,
+   24.34,
+   24.59,
+   24.4,
+   24.35,
+   24.34,
+   24.33,
+   24.25,
+   24.47,
+   37.6,
+   37.58,
+   38.01,
+   37.45,
+   37.91,
+   37.52,
+   37.74,
+   37.58,
+   37.5,
+   37.44,
+   37.94,
+   37.76,
+   37.66,
+   36.17,
+   22.86,
+   22.83,
+   22.87,
+   22.93,
+   23.03,
+   22.87,
+   22.95,
+   22.85,
+   22.94,
+   22.87,
+   23.06,
+   22.87,
+   22.83,
+   23.33,
+   22.89,
+   22.99,
+   22.84,
+   22.93,
+   22.86,
+   22.9,
+   22.98,
+   22.94,
+   22.98,
+   22.94,
+   23.09,
+   24.08,
+   23.82,
+   23.94,
+   23.99,
+   24.33,
+   16.6,
+   16.69,
+   16.84,
+   16.49,
+   16.56,
+   18.62,
+   16.59,
+   39.11,
+   25.99,
+   38.85,
+   26.37,
+   25.9,
+   25.59,
+   25.87,
+   25.71,
+   25.82,
+   25.68,
+   25.65,
+   25.03,
+   25.96,
+   25.73,
+   25.73,
+   24.71,
+   25.69,
+   25.92,
+   24.46,
+   23.54,
+   23.56,
+   23.68,
+   23.62,
+   23.56,
+   23.64,
+   23.59,
+   23.63,
+   23.58,
+   23.82,
+   23.62,
+   23.63,
+   23.61,
+   23.57,
+   23.72,
+   23.53,
+   37.08,
+   36.63,
+   14.45,
+   14.47,
+   36.22,
+   22.84,
+   23.1,
+   23.12,
+   22.84,
+   22.89,
+   22.89,
+   22.84,
+   22.85,
+   22.92,
+   22.95
+  ],
+  "e2e_clips": 30,
+  "e2e_mean_video_s": 2.495670809347936,
+  "e2e_mean_process_s": 0.9719642361333172,
+  "e2e_real_time_factor": 0.3959161804347844
+ },
+ "robustness": [
+  {
+   "condition": "Clean",
+   "n": 60,
+   "top1": 0.6666666666666666
+  },
+  {
+   "condition": "Low light + sensor noise",
+   "n": 60,
+   "top1": 0.6166666666666667
+  },
+  {
+   "condition": "Motion blur",
+   "n": 60,
+   "top1": 0.65
+  },
+  {
+   "condition": "Occluding object",
+   "n": 60,
+   "top1": 0.6333333333333333
+  },
+  {
+   "condition": "Camera tilt 8\u00b0",
+   "n": 60,
+   "top1": 0.6833333333333333
+  },
+  {
+   "condition": "All combined",
+   "n": 60,
+   "top1": 0.6
+  }
+ ],
+ "thermal": {
+  "seconds": 600,
+  "frames": 22106,
+  "first_p50": 25.26689547812566,
+  "last_p50": 25.798311980906874
+ },
+ "size_mb": {
+  "signnet_int8.onnx": 5.808,
+  "hand_landmarker.task": 7.819,
+  "pose_landmarker_lite.task": 5.778
+ },
+ "robustness_headline": {
+  "mode": "video-degradation",
+  "n": 100,
+  "clean": 76.0,
+  "degraded": 73.0
+ }
+}

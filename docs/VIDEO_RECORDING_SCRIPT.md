@@ -50,7 +50,7 @@ talking to Kiran would stand.
 
 ## The signs (Kiran)
 
-The model knows 100 ASL words. These phrases use words it recognises most reliably on new signers.
+The model knows 100 ASL words. These phrases use words it recognises most reliably on held-out test clips.
 Learn each sign from a video dictionary, ideally **Lifeprint (ASL University)**, **SigningSavvy** or
 **Handspeak**, which match the style the model was trained on. Copy the **dominant-hand** version
 exactly: handshape, location, movement, and the number of repetitions.
@@ -109,7 +109,7 @@ visible, not black). Partway through, Koushigan briefly holds a book or notebook
 *(Silent. Sign HELP · NO in dim light with the partial occluder.)*
 
 ### Clip 6 · Anirudh · results and close (~25 s)
-> On signers it has never seen before, EchoGesture recognises a hundred ASL words with seventy-one
+> On held-out test clips, EchoGesture recognises a hundred ASL words with seventy-one
 > percent top-1 and eighty-nine percent top-5 accuracy, at under forty milliseconds per frame on a
 > single CPU, with every model on the device under twenty megabytes.
 >

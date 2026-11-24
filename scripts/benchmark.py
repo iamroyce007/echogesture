@@ -5,7 +5,7 @@
   python scripts/benchmark.py --power-mw 410 --device "Galaxy S25" # merge a power reading taken on-device
 
 Definitions used:
-  top1_accuracy             INT8 model on the held-out WLASL test split (signers unseen in training)
+  top1_accuracy             INT8 model on the held-out WLASL test split (clips unseen in training; signers overlap)
   latency_p95               per-frame streaming latency = keypoint extraction (hands+pose) + classifier, p95
   model_size                total on-device model footprint (2 MediaPipe landmarkers + INT8 classifier)
   accuracy_drop_robustness  top-1 drop when test videos are degraded (low light, occlusion, blur, tilt);

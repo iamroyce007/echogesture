@@ -1,7 +1,7 @@
 """Render the EchoGesture demo video (1280x720, H.264): title cards + POV scenes through the live pipeline.
 
 Every caption in the video is produced by the real system (MediaPipe keypoints + INT8 ONNX model) running
-frame by frame on held-out WLASL test clips, i.e. signers never seen during training.
+frame by frame on held-out WLASL test clips (clips never used in training; WLASL splits share signers).
 
   python scripts/make_demo_video.py --voice --narrate
 """
@@ -39,10 +39,10 @@ NARRATION = {
     "pipeline": "The camera tracks fifty-five points on the signer's hands and upper body. A tiny eight-bit model, "
                 "under six megabytes, reads the motion and predicts the word in under two milliseconds. "
                 "The caption then appears right beside the signer.",
-    "scene0": "Scene one. A signer the model never saw during training.",
+    "scene0": "Scene one. A test clip the model never trained on.",
     "scene1": "Scene two. A different signer, in a different setting.",
     "scene2": "Scene three. The same model, in low light, with motion blur and an object in the way.",
-    "results": "On held-out signers, EchoGesture reaches seventy-one percent top-one accuracy across a hundred words, "
+    "results": "On held-out test clips, EchoGesture reaches seventy-one percent top-one accuracy across a hundred words, "
                "at under forty milliseconds per frame, with every model under twenty megabytes, and zero bytes uploaded.",
     "outro": "EchoGesture. Conversation without the gap. Privacy without compromise.",
 }
@@ -59,7 +59,7 @@ def tts(text: str, path: Path, voice: str | None = None, rate: int | None = None
 # (scene tag, signer_id, glosses, degrade?)  — all clips come from the WLASL *test* split
 SCENES = [
     ("Conversation", 9, ["MOTHER", "WORK", "FINISH"], False),
-    ("New signer", 5, ["WOMAN", "DRINK", "HOT"], False),
+    ("Second signer", 5, ["WOMAN", "DRINK", "HOT"], False),
     ("Low light · blur · occlusion", 9, ["TABLE", "BED"], True),
 ]
 
@@ -178,7 +178,7 @@ def card_results(t, results: dict):
     im = backdrop(t + 13).convert("RGB")
     d = ImageDraw.Draw(im, "RGBA")
     d.text((W / 2, 100), "Measured on-device", font=font(44, "Bold"), fill=WHITE, anchor="mm")
-    d.text((W / 2, 148), f"{results.get('_device', '')}  ·  WLASL100 held-out signers",
+    d.text((W / 2, 148), f"{results.get('_device', '')}  ·  WLASL100 held-out test clips",
            font=font(18, "Regular"), fill=SUB, anchor="mm")
     tiles = [("Top-1 accuracy", "top1_accuracy", "{:.1f}%", "target ≥ 70%"),
              ("Latency p95 / frame", "latency_p95", "{:.0f} ms", "target ≤ 50 ms"),
@@ -214,7 +214,7 @@ def card_outro(t):
     d.text((W / 2, 300), "EchoGesture", font=font(64, "Bold"), fill=WHITE + (a,), anchor="mm")
     d.text((W / 2, 362), "Conversation without the gap. Privacy without compromise.",
            font=font(22, "Regular"), fill=SUB + (a,), anchor="mm")
-    d.text((W / 2, 640), "Demo clips: WLASL test split (signers unseen in training). All captions produced live by the model.",
+    d.text((W / 2, 640), "Demo clips: WLASL test split (clips never used in training). All captions produced live by the model.",
            font=font(14, "Regular"), fill=(140, 146, 160, a), anchor="mm")
     im.alpha_composite(ov)
     return to_bgr(im)
@@ -316,7 +316,7 @@ def main():
 
     rng = np.random.default_rng(0)
     for si, (tag, signer, glosses, bad) in enumerate(SCENES):
-        sub = "Same model, harsh capture conditions" if bad else f"Signer unseen during training  ·  {' · '.join(g.title() for g in glosses)}"
+        sub = "Same model, harsh capture conditions" if bad else f"Held-out test clips  ·  {' · '.join(g.title() for g in glosses)}"
         section(lambda t: card_scene(f"Scene {si + 1}  ·  {tag}", sub, t), 2.2, line=f"scene{si}")
         state = HudState(clock="17:42", tag=tag if bad else None)
         k_scene = 0

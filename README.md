@@ -21,11 +21,11 @@ Why keypoints, not pixels: the classifier never sees faces or backgrounds, which
 also largely invariant to lighting, clothing, and camera position, and it is tiny enough for a wearable
 budget.
 
-## Results (WLASL100, held-out test signers · Mac mini M1, CPU only)
+## Results (WLASL100 held-out test clips · Mac mini M1, CPU only)
 
 | Metric | Target | Measured | Pass |
 | --- | --- | --- | --- |
-| Top-1 accuracy | ≥ 70 % | **71.4 %** (top-5 88.8 %) | ✅ |
+| Top-1 accuracy | ≥ 70 % | **71.4 %** (top-5 87.6 %) | ✅ |
 | Latency p95, per frame (keypoints + classifier) | ≤ 50 ms | **39.7 ms** (classifier alone 1.6 ms) | ✅ |
 | Model size on device | ≤ 25 MB | **19.4 MB** total; sign model 5.8 MB INT8 | ✅ |
 | Accuracy drop, degraded video | ≤ 5 pt | **3.0 pt** (76 → 73 % on 100 clips) | ✅ |
@@ -33,8 +33,32 @@ budget.
 | Average power | ≤ 500 mW | needs an on-device reading (`--power-mw`) | — |
 
 Data: 1,019 of the 2,038 WLASL100 clips were still downloadable. The final model is an ensemble of 3 seeds
-trained on train + val (858 clips), and test (161 clips) was never used for training or model selection.
+trained on train + val (858 clips), and test (161 clips) was never used for training or model selection. The official WLASL splits are **not
+signer-independent**: most test signers also appear in other clips in train/val (see [BENCHMARK.md](BENCHMARK.md)).
 Full numbers are in `results.csv` and `benchmark_report.json`.
+
+## Benchmark
+
+**Full report: [BENCHMARK.md](BENCHMARK.md)**, covering accuracy analysis, ablations, the latency distribution,
+per-condition robustness, calibration, thermal behaviour and limitations. Every figure is generated
+by the scripts in this repo.
+
+![What moved accuracy](docs/benchmark/fig_ablation.png)
+
+| | |
+| --- | --- |
+| Top-1 / top-5 / top-10 (shipped INT8 model, 161 test clips) | **71.4 %** / 87.6 % / 90.7 % |
+| FP32 → INT8 | identical top-1; no accuracy lost to quantization |
+| Per-frame latency p50 / p95 | 25.7 / 39.0 ms (classifier alone 1.4 ms p50) |
+| End-to-end `predict()` on a clip | 2.5× faster than real time (real-time factor 0.40) |
+| Worst single degradation | low light + sensor noise: 67 % → 62 % (60 videos) |
+| Biggest accuracy lever | more data (51.6 % → 67.1 %), then train+val + 3-seed ensemble (→ 71.4 %) |
+
+```bash
+python scripts/benchmark.py --thermal-seconds 600   # results.csv (the Track 2 sheet)
+python scripts/benchmark_extended.py                # ablations, latency distribution, robustness per condition
+python3 scripts/make_benchmark_report.py            # BENCHMARK.md + docs/benchmark/*.png
+```
 
 ## Setup
 
@@ -79,7 +103,7 @@ python scripts/extract_landmarks.py --workers 4          # -> data/landmarks/*.n
 for s in 0 1 2; do python scripts/train.py --epochs 200 --seed $s --train-on-val --out-dir checkpoints_full_s$s; done
 python scripts/export.py --ckpt checkpoints_full_s{0,1,2}/model.pt --calib checkpoints_full_s0/calib.npy
                                                          # -> models/signnet_int8.onnx (+ fp32, vocab.json)
-python scripts/make_predictions.py --split test          # self-check on held-out signers
+python scripts/make_predictions.py --split test          # self-check on the held-out test clips
 python scripts/benchmark.py --thermal-seconds 600        # -> results.csv, benchmark_report.json
 ```
 
