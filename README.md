@@ -1,5 +1,9 @@
 # EchoGesture — on-device sign recognition (XR Hackathon 2026 · Track 2)
 
+**▶ Demo video: [EchoGesture_Demo.mp4](EchoGesture_Demo.mp4)** (1:43, with voice-over). The signers are real people from the
+public WLASL dataset, filmed with ordinary cameras: not our team, not smart glasses, not AI-generated. Every caption is
+real EchoGesture output. The glasses framing is a visual effect, and the voice is text-to-speech. The video states this on screen.
+
 Exocentric isolated-sign recognition: **live camera video → ASL gloss → captions (HUD) / speech**, running
 fully on the device. No frame, keypoint or result is uploaded anywhere.
 
@@ -133,7 +137,7 @@ Words are segmented from the continuous stream using hand presence and motion en
 ### Demo video
 
 ```bash
-python scripts/make_demo_video.py --voice --narrate   # -> demo/echogesture_demo.mp4 (≈83 s, 1280x720, H.264 + AAC)
+python scripts/make_demo_video.py --voice --narrate   # -> EchoGesture_Demo.mp4 (≈103 s, 1280x720, H.264 + AAC)
 ```
 The video has intro and "how it works" cards, followed by three POV scenes: two different signers, then a
 harsh-conditions scene with low light, motion blur and an occluder. A results card at the end is read from

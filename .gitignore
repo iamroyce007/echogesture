@@ -10,3 +10,4 @@ models_synth/
 .DS_Store
 models/*_fp32.onnx
 models/*_pre.onnx
+!EchoGesture_Demo.mp4

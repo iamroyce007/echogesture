@@ -39,6 +39,10 @@ NARRATION = {
     "pipeline": "The camera tracks fifty-five points on the signer's hands and upper body. A tiny eight-bit model, "
                 "under six megabytes, reads the motion and predicts the word in under two milliseconds. "
                 "The caption then appears right beside the signer.",
+    "disclosure": "A note on this footage. The signers are real people from the public W L A S L research dataset. "
+                  "They were filmed with ordinary cameras, not smart glasses, and nothing here is A I generated. "
+                  "The glasses view is a visual effect, and this voice is synthetic. "
+                  "Every caption you will see is real output from our model, computed frame by frame.",
     "scene0": "Scene one. A test clip the model never trained on.",
     "scene1": "Scene two. A different signer, in a different setting.",
     "scene2": "Scene three. The same model, in low light, with motion blur and an object in the way.",
@@ -163,6 +167,52 @@ def card_pipeline(t, dur):
     return to_bgr(im)
 
 
+def card_disclosure(t):
+    im = backdrop(t + 7).convert("RGB")
+    d = ImageDraw.Draw(im, "RGBA")
+    d.text((W / 2, 92), "How this demo was made", font=font(42, "Bold"), fill=WHITE, anchor="mm")
+    d.text((W / 2, 138), "So you know exactly what is real in the next minute.", font=font(19, "Regular"), fill=SUB, anchor="mm")
+    rows = [
+        (GREEN, "Real", "Signers", "Real people from the public WLASL research dataset. Not filmed by us, not AI-generated."),
+        (GREEN, "Real", "Captions & tracking", "Hand skeletons, top-3 guesses, confidence and captions are EchoGesture's actual output."),
+        (AMBER, "Effect", "Glasses view", "Clips were filmed with ordinary cameras, not smart glasses. The framing is a visual effect."),
+        (AMBER, "Simulated", "Scene 3 conditions", "Low light, blur and the blocking object are added in software, as labelled."),
+        (AMBER, "Synthetic", "Voice", "Narration and spoken words are text-to-speech. Built with AI assistance (AI_DISCLOSURE.md)."),
+    ]
+    y0, rh, x0, cw = 190, 82, 120, W - 240
+    for i, (col, tagtxt, head, body) in enumerate(rows):
+        a = ease((t - 0.15 * i) / 0.5)
+        if a <= 0:
+            continue
+        y = y0 + i * rh + int((1 - a) * 14)
+        im.paste(Image.new("RGB", (cw, rh - 12), GLASS), (x0, y), rr_mask(cw, rh - 12, 18).point(lambda v: int(v * 0.88 * a)))
+        tw = text_w(tagtxt, font(15, "SemiBold")) + 28
+        d.rounded_rectangle((x0 + 20, y + 21, x0 + 20 + tw, y + 49), radius=14, fill=col + (int(60 * a),),
+                            outline=col + (int(200 * a),))
+        d.text((x0 + 20 + tw / 2, y + 35), tagtxt, font=font(15, "SemiBold"), fill=col + (int(255 * a),), anchor="mm")
+        d.text((x0 + 150, y + 13), head, font=font(19, "Bold"), fill=WHITE + (int(255 * a),))
+        d.text((x0 + 150, y + 40), body, font=font(16, "Regular"), fill=SUB + (int(255 * a),))
+    return to_bgr(im)
+
+
+def source_label(img: np.ndarray, extra: str | None = None) -> np.ndarray:
+    """Small, persistent provenance label in the bottom-left corner of every scene frame."""
+    im = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB)).convert("RGBA")
+    lines = ["Dataset footage (WLASL) · real signer", "Not AI-generated · glasses view simulated"]
+    if extra:
+        lines.append(extra)
+    f = font(13, "Medium")
+    w = max(text_w(l, f) for l in lines) + 24
+    h = 16 + 19 * len(lines)
+    x, y = 22, H - 28 - h
+    ov = Image.new("RGBA", (w, h), GLASS + (200,))
+    im.paste(ov, (x, y), rr_mask(w, h, 12))
+    d = ImageDraw.Draw(im)
+    for i, l in enumerate(lines):
+        d.text((x + 12, y + 9 + 19 * i), l, font=f, fill=(225, 229, 238))
+    return cv2.cvtColor(np.array(im.convert("RGB")), cv2.COLOR_RGB2BGR)
+
+
 def card_scene(title, sub, t):
     im = backdrop(t + 9)
     ov = Image.new("RGBA", (W, H), (0, 0, 0, 0))
@@ -214,7 +264,7 @@ def card_outro(t):
     d.text((W / 2, 300), "EchoGesture", font=font(64, "Bold"), fill=WHITE + (a,), anchor="mm")
     d.text((W / 2, 362), "Conversation without the gap. Privacy without compromise.",
            font=font(22, "Regular"), fill=SUB + (a,), anchor="mm")
-    d.text((W / 2, 640), "Demo clips: WLASL test split (clips never used in training). All captions produced live by the model.",
+    d.text((W / 2, 640), "Footage: real signers from the WLASL dataset (test clips, not AI-generated, not filmed with smart glasses). Captions are real model output; voice is synthetic.",
            font=font(14, "Regular"), fill=(140, 146, 160, a), anchor="mm")
     im.alpha_composite(ov)
     return to_bgr(im)
@@ -265,7 +315,7 @@ def has_hand(lm):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--out", type=Path, default=ROOT / "demo" / "echogesture_demo.mp4")
+    ap.add_argument("--out", type=Path, default=ROOT / "EchoGesture_Demo.mp4")
     ap.add_argument("--data-dir", type=Path, default=ROOT / "data")
     ap.add_argument("--voice", action="store_true", help="speak each committed word (macOS `say`)")
     ap.add_argument("--narrate", action="store_true", help="add a voice-over to the title/info cards (macOS `say`)")
@@ -313,12 +363,14 @@ def main():
 
     section(lambda t: card_intro(t, 4.5), 4.5, line="intro")
     section(lambda t: card_pipeline(t, 6.0), 6.0, line="pipeline")
+    section(card_disclosure, 7.0, line="disclosure")
 
     rng = np.random.default_rng(0)
     for si, (tag, signer, glosses, bad) in enumerate(SCENES):
         sub = "Same model, harsh capture conditions" if bad else f"Held-out test clips  ·  {' · '.join(g.title() for g in glosses)}"
         section(lambda t: card_scene(f"Scene {si + 1}  ·  {tag}", sub, t), 2.2, line=f"scene{si}")
-        state = HudState(clock="17:42", tag=tag if bad else None)
+        state = HudState(clock="Replay", tag=tag if bad else None)
+        label_extra = "Degradations simulated in software" if bad else None
         k_scene = 0
         with LandmarkExtractor() as ex:
             for g in glosses:
@@ -346,7 +398,7 @@ def main():
                         words, probs, model_ms, _ = pred.classify_landmarks(np.stack(buf), 3)
                         state.hypotheses, state.model_ms = list(zip(words, probs)), model_ms
                     state.t = n_frames / FPS
-                    emit(hud.render(view, state))
+                    emit(source_label(hud.render(view, state), label_extra))
                     k_scene += 1
                 # end of sign: commit the word from the full clip
                 words, probs, _, _ = pred.classify_landmarks(np.stack(buf), 3)
@@ -360,9 +412,9 @@ def main():
                 state.signing = False
                 for _ in range(int(1.1 * FPS)):  # hold so the caption animation is readable
                     state.t = n_frames / FPS
-                    emit(hud.render(view, state))
+                    emit(source_label(hud.render(view, state), label_extra))
         # short fade to black at scene end
-        last = hud.render(view, state)
+        last = source_label(hud.render(view, state), label_extra)
         for i in range(int(0.4 * FPS)):
             emit(fade(last, 1 - (i + 1) / (0.4 * FPS)))
 
